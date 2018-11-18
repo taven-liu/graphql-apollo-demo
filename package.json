@@ -1,8 +1,11 @@
 {
-  "name": "graphql-relay-demo",
+  "name": "graphql-apollo-demo",
   "version": "0.0.1",
-  "description": "Grapql & relay demo",
+  "description": "Grapql apollo demo",
+  "private": true,
   "main": "index.js",
   "author": "taven",
-  "license": "ISC"
+  "workspaces": [
+    "packages/*"
+  ]
 }
