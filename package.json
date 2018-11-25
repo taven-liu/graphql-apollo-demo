@@ -5,6 +5,41 @@
   "private": true,
   "main": "index.js",
   "author": "taven",
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.9.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "husky": "^1.2.0",
+    "lint-staged": "^8.1.0",
+    "pre-commit": "^1.2.2",
+    "prettier": "^1.15.2",
+    "prettier-eslint-cli": "^4.7.1",
+    "stylelint": "^9.8.0",
+    "stylelint-config-standard": "^18.2.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.css": [
+      "stylelint",
+      "git add"
+    ]
+  },
   "workspaces": [
     "package/*"
   ]
