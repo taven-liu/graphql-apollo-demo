@@ -1,16 +1,17 @@
 import R from 'ramda'
 
-export const delay = (ms, d=true) => {
-  return new Promise((resolve) => {
+export const delay = (ms, d = true) => {
+  return new Promise(resolve => {
     setTimeout(() => resolve(d), ms)
   })
 }
 export const findById = (s, id) => R.find(R.propEq('id', id))(s)
-export const batchGet = (s, values, key) => R.filter(item => {
-  console.log(values)
-  console.log(item)
-  return values.indexOf(item[key]) !== -1
-}, s)
+export const batchGet = (s, values, key) =>
+  R.filter(item => {
+    console.log(values)
+    console.log(item)
+    return values.indexOf(item[key]) !== -1
+  }, s)
 
 export default {
   authors: [
@@ -45,5 +46,3 @@ export default {
     }
   ]
 }
-
-

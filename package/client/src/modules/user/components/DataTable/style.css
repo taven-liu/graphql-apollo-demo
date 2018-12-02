@@ -1,0 +1,18 @@
+.author {
+  padding: 10px;
+  border: 2px solid gray;
+
+  & + .author {
+    margin-top: 20px;
+  }
+}
+
+.book {
+  border: 1px solid goldenrod;
+  margin-left: 16px;
+  padding: 8px;
+
+  & + .book {
+    margin-top: 12px;
+  }
+}

@@ -1,29 +1,30 @@
-const path =  require('path')
-const webpack =  require( 'webpack')
-const MiniCssExtractPlugin =  require( 'mini-css-extract-plugin')
-const HtmlWebpackPlugin =  require( 'html-webpack-plugin')
-const UglifyJSPlugin =  require( 'uglifyjs-webpack-plugin')
+const path = require('path')
+const webpack = require('webpack')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 
 const getPostcssLoaders = isProductionMode => {
-  const postCssLoaders = [{
-    loader: 'css-loader',
-    options: {
-      modules: true,
-      minimize: isProductionMode,
-      sourceMap: true,
-      camelCase: true,
-      importLoaders: 1,
-      localIdentName: '[path][name]__[local]--[hash:base64:5]'
+  const postCssLoaders = [
+    {
+      loader: 'css-loader',
+      options: {
+        modules: true,
+        minimize: isProductionMode,
+        sourceMap: true,
+        camelCase: true,
+        importLoaders: 1,
+        localIdentName: '[path][name]__[local]--[hash:base64:5]'
+      }
+    },
+    {
+      loader: 'postcss-loader',
+      options: {
+        ident: 'postcss',
+        plugins: loader => [require('postcss-cssnext')()]
+      }
     }
-  }, {
-    loader: 'postcss-loader',
-    options: {
-      ident: 'postcss',
-      plugins: (loader) => [
-        require('postcss-cssnext')()
-      ]
-    }
-  }]
+  ]
   if (isProductionMode) {
     return [MiniCssExtractPlugin.loader].concat(postCssLoaders)
   } else {
@@ -38,10 +39,7 @@ module.exports = (env = {}, argv) => {
   const isProductionMode = argv.mode === 'production'
   return {
     entry: {
-      'app': [
-        'react-hot-loader/patch',
-        './src/index.js'
-      ]
+      app: ['react-hot-loader/patch', './src/index.js']
     },
     output: {
       filename: isProductionMode ? '[name].[chunkhash].js' : '[name].js',
@@ -50,28 +48,43 @@ module.exports = (env = {}, argv) => {
       publicPath: '/'
     },
     module: {
-      rules: [{
-        test: /\.js$/,
-        loaders: 'babel-loader',
-        exclude: /node_modules/
-      }, {
-        test: /\.css$/,
-        use: getPostcssLoaders(isProductionMode)
-      }, {
-        test: /\.(png|jpg|gif|svg|woff2?)$/,
-        use: [{
-          loader: 'url-loader',
-          options: {
-            limit: 8192
-          }
-        }]
-      }]
+      rules: [
+        {
+          test: /\.js$/,
+          loaders: 'babel-loader',
+          exclude: /node_modules/
+        },
+        {
+          test: /\.mjs$/,
+          include: /node_modules/,
+          type: 'javascript/auto'
+        },
+        {
+          test: /\.css$/,
+          exclude: /node_modules/,
+          use: getPostcssLoaders(isProductionMode)
+        },
+        {
+          test: /\.css$/,
+          include: /node_modules/,
+          use: isProductionMode ? cssUse : cssUseDebug
+        },
+        {
+          test: /\.(png|jpg|gif|svg|woff2?)$/,
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                limit: 8192
+              }
+            }
+          ]
+        }
+      ]
     },
     resolve: {
-      modules: [
-        'node_modules',
-        path.resolve(__dirname, 'src')
-      ]
+      extensions: ['.js', '.json', '.css'],
+      modules: ['node_modules', path.resolve(__dirname, 'src')]
     },
     plugins: [
       new webpack.EnvironmentPlugin({
@@ -87,10 +100,11 @@ module.exports = (env = {}, argv) => {
         favicon: path.resolve(__dirname, './src/favicon.ico')
       }),
       new webpack.NamedModulesPlugin(),
-      isProductionMode && new UglifyJSPlugin({
-        parallel: true,
-        sourceMap: true
-      })
+      isProductionMode &&
+        new UglifyJSPlugin({
+          parallel: true,
+          sourceMap: true
+        })
     ].filter(plugin => plugin),
     devServer: {
       historyApiFallback: {
@@ -98,7 +112,7 @@ module.exports = (env = {}, argv) => {
       },
       compress: true,
       hot: true,
-      port: 4200
+      port: 8000
     },
     devtool: isProductionMode ? 'source-map' : 'cheap-module-eval-source-map'
   }
