@@ -5,6 +5,9 @@
   "private": true,
   "main": "index.js",
   "author": "taven",
+  "scripts": {
+    "format": "prettier --config .prettierrc --write 'packages/**/*.js'"
+  },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "eslint": "^5.9.0",
@@ -41,6 +44,6 @@
     ]
   },
   "workspaces": [
-    "package/*"
+    "packages/*"
   ]
 }

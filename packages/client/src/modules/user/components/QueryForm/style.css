@@ -1,0 +1,13 @@
+.row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  & .actions {
+    margin-left: 24px;
+
+    & > button + button {
+      margin-left: 12px;
+    }
+  }
+}
