@@ -1,9 +1,9 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import jsonwebtoken from 'jsonwebtoken'
-import config from '../config/config'
+import config from './config/config'
 
-export default api => {
+export default () => {
   const tokenRoute = express.Router()
   tokenRoute.use(bodyParser.urlencoded({ extended: false }))
   tokenRoute.use(bodyParser.json())

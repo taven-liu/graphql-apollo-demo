@@ -1,6 +1,6 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import { getAuthors } from './author'
+import { listAuthors } from './author'
 
 const api = express.Router()
 
@@ -10,6 +10,6 @@ api.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 api.use(bodyParser.json())
 
-api.get('/authors', getAuthors)
+api.get('/authors', listAuthors)
 
 export default api

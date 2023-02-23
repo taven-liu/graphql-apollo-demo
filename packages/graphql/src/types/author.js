@@ -1,75 +1,4 @@
-import { GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLInt, GraphQLList } from 'graphql'
-
-import Book from './book'
-
-const AuthorType = new GraphQLObjectType({
-  name: 'Author',
-  fields: () => ({
-    id: {
-      type: new GraphQLNonNull(GraphQLInt)
-    },
-    firstName: {
-      type: GraphQLString
-    },
-    lastName: {
-      type: GraphQLString
-    },
-    books: {
-      type: new GraphQLList(Book),
-      resolve: ({ books }, args, { api }) => {
-        return api.batchGetBookByIds(books)
-      }
-    }
-  })
-})
-
-export default AuthorType
-
-export const queries = {
-  author: {
-    type: AuthorType,
-    args: {
-      id: {
-        type: GraphQLInt
-      }
-    },
-    resolve: (_, { id }, { api }) => {
-      console.log(id)
-      return api.getAuthorById(id)
-    }
-  },
-  authors: {
-    type: new GraphQLList(AuthorType),
-    resolve: (_, args, { api }) => {
-      return api.getAuthors()
-    }
-  }
-}
-
-// const createAuthorInput = new GraphQLInputObjectType({
-
-// })
-
-export const mutations = {
-  createAuthor: {
-    type: AuthorType,
-    args: {
-      firstName: {
-        type: GraphQLString
-      },
-      lastName: {
-        type: GraphQLString
-      },
-      books: {
-        type: new GraphQLList(GraphQLInt)
-      }
-    },
-    resolve: (_, args, { api }) => {
-      return api.createAuthor(args)
-    }
-  }
-}
-
+// 方式一
 export const typeDef = `
   input createAuthorInput {
     firstName: String!
@@ -79,11 +8,16 @@ export const typeDef = `
 
   extend type Query {
     author(id: Int!): Author
-    authors(name: String): [Author]
+    authors(pageInfo: PaginationInput, name: String): AuthorConnection
   }
 
   extend type Mutation {
     createAuthor(input: createAuthorInput): Author
+  }
+
+  input PaginationInput {
+    offset: Int!
+    limit: Int!
   }
 
   type Author {
@@ -92,26 +26,103 @@ export const typeDef = `
     lastName: String
     books: [Book]
   }
+
+  type AuthorConnection {
+    pageInfo: Pagination!
+    items: [Author]
+  }
+
+  type Pagination {
+    hasNext: Boolean!
+    hasPrevious: Boolean!
+    totalCount: Int!
+    currentOffset: Int!
+  }
 `
 
 export const resolvers = {
   Query: {
     author: (_, { id }, { api }) => {
-      return api.getAuthorById(id)
+      return api.author.getAuthorById(id)
     },
-    authors: (parent, { name }, { api }) => {
-      return api.getAuthors(name)
+    authors: (_, { pageInfo, name }, { api }) => {
+      return api.author.listAuthors(pageInfo, name)
     }
   },
   Mutation: {
     createAuthor: (_, { input }, { api }) => {
-      console.log('---\n', input)
-      return api.createAuthor(input)
+      return api.author.createAuthor(input)
     }
   },
   Author: {
     books: ({ books }, args, { api }) => {
-      return api.batchGetBookByIds(books)
+      return api.book.batchGetBookByIds(books)
     }
   }
 }
+
+// 方式二
+// import { GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLInt, GraphQLList } from 'graphql'
+
+// import { BookType } from './book'
+// export const AuthorType = new GraphQLObjectType({
+//   name: 'Author',
+//   fields: () => ({
+//     id: {
+//       type: new GraphQLNonNull(GraphQLInt)
+//     },
+//     firstName: {
+//       type: GraphQLString
+//     },
+//     lastName: {
+//       type: GraphQLString
+//     },
+//     books: {
+//       type: new GraphQLList(BookType),
+//       resolve: ({ books }, args, { api }) => {
+//         return api.author.batchGetBookByIds(books)
+//       }
+//     }
+//   })
+// })
+
+// export const queries = {
+//   author: {
+//     type: AuthorType,
+//     args: {
+//       id: {
+//         type: GraphQLInt
+//       }
+//     },
+//     resolve: (_, { id }, { api }) => {
+//       console.log(id)
+//       return api.author.getAuthorById(id)
+//     }
+//   },
+//   authors: {
+//     type: new GraphQLList(AuthorType),
+//     resolve: (_, args, { api }) => {
+//       return api.author.listAuthors()
+//     }
+//   }
+// }
+
+// export const mutations = {
+//   createAuthor: {
+//     type: AuthorType,
+//     args: {
+//       firstName: {
+//         type: GraphQLString
+//       },
+//       lastName: {
+//         type: GraphQLString
+//       },
+//       books: {
+//         type: new GraphQLList(GraphQLInt)
+//       }
+//     },
+//     resolve: (_, args, { api }) => {
+//       return api.author.createAuthor(args)
+//     }
+//   }
+// }

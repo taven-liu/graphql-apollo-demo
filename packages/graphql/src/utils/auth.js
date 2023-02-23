@@ -1,4 +1,5 @@
 export const getJwtToken = function(req) {
+  console.log('-----xxxxxxxxxxxx')
   const parts = req.headers.authorization.split(' ')
   let token
   if (parts.length === 2) {
